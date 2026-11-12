@@ -12,7 +12,8 @@ This is an unofficial Windows port. It does not replace, and is not endorsed by,
 ## Windows port
 
 - Published by [DiamondDogz](https://github.com/DiamondDogz). This is the Windows build, the fixes it needed, and the launcher around the v1.0 runtime. It is not a claim on the runtime, and not a claim on the game.
-- [Claude](https://claude.ai), by Anthropic. The Windows changes, the Sieg Zeon launcher, its English and French texts, and these documents were written with Claude. See [AI.md](AI.md).
+- [Grok](https://grok.com), by xAI. About 90% of the Windows port code, including the first Sieg Zeon launcher, was written with Grok. The runtime was not rewritten by it. See [AI.md](AI.md).
+- [Claude](https://claude.ai), by Anthropic. The crash investigation and the fixes listed below, the cleanup, the launcher languages, the Crowbar files, and these documents were written with Claude. The runtime was not rewritten by it.
 
 Windows changes in this branch, beyond the build itself:
 

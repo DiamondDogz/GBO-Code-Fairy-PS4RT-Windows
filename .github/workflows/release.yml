@@ -37,4 +37,10 @@ jobs:
         run: |
           sha=$(cut -d' ' -f1 dist/*.sha256)
           sed -e "s/@SHA256@/$sha/" -e "s/@VERSION@/${TAG#windows-}/" packaging/windows/release-notes.md > notes.md
-          gh release create "$TAG" dist/* --target "$GITHUB_SHA" --prerelease --title "$TAG" --notes-file notes.md
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            # Same version again (documents fixed): replace the archive, keep the tag.
+            gh release upload "$TAG" dist/* --clobber
+            gh release edit "$TAG" --notes-file notes.md
+          else
+            gh release create "$TAG" dist/* --target "$GITHUB_SHA" --prerelease --title "$TAG" --notes-file notes.md
+          fi

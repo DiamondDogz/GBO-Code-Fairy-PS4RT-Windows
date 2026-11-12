@@ -53,9 +53,15 @@ Les réglages sont ceux du menu en jeu. En jeu, Insert, ou L2 et R3, ouvre ce me
 
 `SiegZeon.exe` n’est pas signé. SmartScreen peut prévenir. Ne désactivez pas Microsoft Defender.
 
+## Avertissement
+
+Oui, une bonne partie de tout ça est de l’AI slop. À prendre ou à laisser.
+
+Environ 90 % du code du portage Windows a été écrit avec Grok. Claude est arrivé ensuite : il a trouvé pourquoi le jeu plantait au premier combat, a fait le ménage, et a écrit les langues du lanceur, les fichiers Crowbar et ces pages. Voir [AI.md](AI.md).
+
 ## Crédits
 
-Le runtime est [HekamiAeon, GBO-Code-Fairy-PS4RT](https://github.com/HekamiAeon/GBO-Code-Fairy-PS4RT). Ce portage Windows est publié par [DiamondDogz](https://github.com/DiamondDogz). Les changements Windows, le lanceur et ces documents ont été écrits avec [Claude](https://claude.ai), d’Anthropic. Voir [CREDITS.md](CREDITS.md) et [AI.md](AI.md).
+Le runtime est [HekamiAeon, GBO-Code-Fairy-PS4RT](https://github.com/HekamiAeon/GBO-Code-Fairy-PS4RT). Ce portage Windows est publié par [DiamondDogz](https://github.com/DiamondDogz). Environ 90 % du code du portage Windows a été écrit avec [Grok](https://grok.com), de xAI. Le reste, les langues du lanceur et ces documents ont été écrits avec [Claude](https://claude.ai), d’Anthropic. Voir [CREDITS.md](CREDITS.md) et [AI.md](AI.md).
 
 ## Licence
 
