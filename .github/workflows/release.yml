@@ -1,10 +1,16 @@
 name: Release
 
-# Pushing a tag windows-X.Y publishes the player archive as a pre-release.
+# Publishes the player archive as a pre-release tagged windows-VERSION, either from a pushed
+# windows-* tag or by hand (Actions > Release > Run workflow).
 # Runs on a GitHub-hosted runner: the binaries are already in the branch.
 on:
   push:
     tags: ["windows-*"]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version, without the windows- prefix (e.g. 1.0)"
+        required: true
 
 permissions:
   contents: write
@@ -13,10 +19,12 @@ jobs:
   release:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    env:
+      TAG: ${{ github.event_name == 'workflow_dispatch' && format('windows-{0}', inputs.version) || github.ref_name }}
     steps:
       - uses: actions/checkout@v4
       - name: Build the archive
-        run: python3 packaging/windows/release_zip.py "${GITHUB_REF_NAME#windows-}" dist
+        run: python3 packaging/windows/release_zip.py "${TAG#windows-}" dist
       - name: Check it with crowbar-check
         run: |
           pip install --quiet git+https://github.com/DiamondDogz/crowbar-sdk
@@ -28,5 +36,5 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           sha=$(cut -d' ' -f1 dist/*.sha256)
-          sed -e "s/@SHA256@/$sha/" -e "s/@VERSION@/${GITHUB_REF_NAME#windows-}/" packaging/windows/release-notes.md > notes.md
-          gh release create "$GITHUB_REF_NAME" dist/* --prerelease --title "$GITHUB_REF_NAME" --notes-file notes.md
+          sed -e "s/@SHA256@/$sha/" -e "s/@VERSION@/${TAG#windows-}/" packaging/windows/release-notes.md > notes.md
+          gh release create "$TAG" dist/* --target "$GITHUB_SHA" --prerelease --title "$TAG" --notes-file notes.md
