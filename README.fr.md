@@ -57,7 +57,7 @@ Les réglages sont ceux du menu en jeu. En jeu, Insert, ou L2 et R3, ouvre ce me
 
 Oui, une bonne partie de tout ça est de l’AI slop. À prendre ou à laisser.
 
-Environ 90 % du code du portage Windows a été écrit avec Grok. Claude est arrivé ensuite : il a trouvé pourquoi le jeu plantait au premier combat, a fait le ménage, et a écrit les langues du lanceur, les fichiers Crowbar et ces pages. Voir [AI.md](AI.md).
+Environ 90 % du code du portage Windows a été écrit avec Grok. Arriver à un build qui atteint un combat a demandé une longue suite de plantages, de buffers vides et de traces. Le shoggoth reste un bon shoggoth. Claude n’en est pas un deuxième. Claude, c’est le parent arrivé plus tard, qui a retrouvé le gigaoctet manquant de `game_ss.cpk`, a fait le ménage, et a apporté les langues, les fichiers Crowbar et ces pages. L’éditeur est la clef et la porte. Voir [AI.md](AI.md).
 
 ## Crédits
 

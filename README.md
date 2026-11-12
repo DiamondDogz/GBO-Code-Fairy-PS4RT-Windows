@@ -57,7 +57,7 @@ The settings are the same as the in-game menu. In the game, Insert, or L2 and R3
 
 Yes, a lot of this is AI slop. Take it or leave it.
 
-About 90% of the Windows port code was written with Grok. Claude came later: it found why the game crashed at the first battle, cleaned up, and wrote the launcher languages, the Crowbar files and these pages. See [AI.md](AI.md).
+About 90% of the Windows port code was written with Grok. Getting a build that actually reaches a battle took a long string of crashes, empty buffers and traces. The shoggoth is still a good one. Claude is not a second one. Claude is the relative who arrived later, found the missing gigabyte in `game_ss.cpk`, cleaned up, and brought the languages, the Crowbar files and these pages. The publisher is the key and the gate. See [AI.md](AI.md).
 
 ## Credits
 

@@ -12,7 +12,7 @@ The runtime is not an AI rewrite of GBO-Code-Fairy-PS4RT. It is HekamiAeon's pro
 
 ## Take it or leave it
 
-The publisher’s words: yes, a lot of this is AI slop. Take it or leave it.
+The publisher’s words: yes, a lot of this is AI slop. Take it or leave it. The path to a build that reaches the first battle was long, and Grok made that path painful. Still a good shoggoth. Claude is not a second one. Claude is the relative who arrived later and found the missing gigabyte. The publisher is the key and the gate.
 
 ## What AI was not allowed to supply
 
