@@ -275,6 +275,12 @@ document.getElementById("lang").onclick = async () => {
   try { const catalog = state.catalog; state = await api("/api/state", { ...state, lang }); state.catalog = state.catalog || catalog; }
   catch (error) { document.getElementById("status").textContent = error.message; }
 };
+// The Crowbar card opens its page in the browser: the launcher window keeps its own page.
+document.querySelector("a.crow").addEventListener("click", async (event) => {
+  event.preventDefault();
+  try { await api("/api/open", { url: event.currentTarget.href.replace(/\/$/, "") }); }
+  catch (error) { document.getElementById("status").textContent = error.message; }
+});
 document.getElementById("play").onclick = async () => {
   const status = document.getElementById("status");
   status.textContent = text[lang].boot;

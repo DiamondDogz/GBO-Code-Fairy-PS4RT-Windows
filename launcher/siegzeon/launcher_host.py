@@ -79,6 +79,7 @@ DEFAULT = {
     "lang": "en",
 }
 LANGS = ("en", "fr")
+OPEN_URLS = ("https://github.com/DiamondDogz/crowbar",)
 
 
 class LauncherError(RuntimeError):
@@ -504,6 +505,15 @@ class Handler(BaseHTTPRequestHandler):
                     state["paths"].update(found)
                     save_state(state)
                 self.send_json(200, state["paths"])
+                return
+            if path == "/api/open":
+                # Links open in the player's browser, so the launcher window never leaves its page.
+                url = str(payload.get("url") or "")
+                if url not in OPEN_URLS:
+                    raise LauncherError("unknownFolder")
+                if os.name == "nt":
+                    os.startfile(url)
+                self.send_json(200, {"ok": True})
                 return
             if path == "/api/play":
                 with LOCK:
