@@ -1,7 +1,7 @@
 {
   "crowbar": 1,
   "name": "Sieg Zeon",
-  "game": "gundam-battle-operation-code-fairy",
+  "game": "gundam-code-fairy",
   "titleIds": ["CUSA28763"],
   "data": "out/{titleId}",
   "settings": "{data}/ps4rt.ini",
