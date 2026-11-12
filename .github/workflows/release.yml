@@ -1,0 +1,32 @@
+name: Release
+
+# Pushing a tag windows-X.Y publishes the player archive as a pre-release.
+# Runs on a GitHub-hosted runner: the binaries are already in the branch.
+on:
+  push:
+    tags: ["windows-*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the archive
+        run: python3 packaging/windows/release_zip.py "${GITHUB_REF_NAME#windows-}" dist
+      - name: Check it with crowbar-check
+        run: |
+          pip install --quiet git+https://github.com/DiamondDogz/crowbar-sdk
+          mkdir check && cd check && unzip -q ../dist/*.zip
+          crowbar-check */ --json > report.json || true
+          python3 -c "import json,sys; r=json.load(open('report.json')); print(json.dumps(r['errors'], indent=1)); sys.exit(0 if r['ok'] else 1)"
+      - name: Publish the pre-release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          sha=$(cut -d' ' -f1 dist/*.sha256)
+          sed -e "s/@SHA256@/$sha/" -e "s/@VERSION@/${GITHUB_REF_NAME#windows-}/" packaging/windows/release-notes.md > notes.md
+          gh release create "$GITHUB_REF_NAME" dist/* --prerelease --title "$GITHUB_REF_NAME" --notes-file notes.md
