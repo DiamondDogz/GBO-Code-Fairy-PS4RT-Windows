@@ -1,0 +1,18 @@
+{
+  "crowbar": 1,
+  "name": "Sieg Zeon",
+  "game": "gundam-battle-operation-code-fairy",
+  "titleIds": ["CUSA28763"],
+  "data": "out/{titleId}",
+  "settings": "{data}/ps4rt.ini",
+  "launch": {
+    "windows": ["python/python.exe", "scripts/ps4rt_launch.py", "--game", "{game}"]
+  },
+  "features": {
+    "trophies": true,
+    "dlc": ["--dlc-pkg", "{file}"],
+    "updatePkg": ["--update-pkg", "{file}"],
+    "updateFolder": ["--update-extracted", "{dir}"],
+    "noDialogs": ["--no-dialogs"]
+  }
+}

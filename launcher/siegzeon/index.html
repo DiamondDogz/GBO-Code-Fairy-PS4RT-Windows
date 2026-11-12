@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sieg Zeon</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Figtree:wght@400;500;600&display=swap">
+<style>
+  :root { --bg:#09090b; --panel:#16161a; --panel2:#1e1e24; --line:#2c2c33; --cream:#f4efe4; --muted:#9c978c; --gold:#f0c84a; --ink:#1a1404; }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; overflow: hidden; background: var(--bg); }
+  body { margin:0; background:var(--bg); color:var(--cream); font-family:Figtree,system-ui,sans-serif; }
+  button { cursor:pointer; font:inherit; }
+  .app { display:flex; width:100%; height:100%; background:var(--bg); }
+  nav { width:56px; border-right:1px solid var(--line); display:flex; flex-direction:column; align-items:center; gap:8px; padding:16px 0; background:#101014; }
+  nav button { width:44px; height:44px; border:0; border-radius:8px; background:transparent; color:var(--muted); }
+  nav button.on { color:var(--gold); }
+  nav .lang { margin-top:auto; color:var(--gold); font-weight:600; }
+  main { flex:1; display:flex; flex-direction:column; min-width:0; }
+  .row { flex:1; display:flex; min-height:0; }
+  .stage { position:relative; flex:1; display:flex; align-items:flex-end; padding:48px 64px 80px; overflow:hidden; }
+  .stage video, .stage img.art { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+  .stage .shade { position:absolute; inset:0; background:linear-gradient(to top, #09090b, transparent 55%); }
+  .stage .copy { position:relative; }
+  h1 { font-family:"Cormorant Garamond",Georgia,serif; font-size:clamp(3rem, 7vw, 6rem); font-weight:500; margin:0; line-height:0.9; }
+  .hint { max-width:28rem; color:var(--cream); }
+  .crow { margin-top:28px; max-width:36rem; display:flex; gap:16px; padding:16px; border:1px solid var(--line); border-radius:16px; background:rgba(16,16,20,.8); text-decoration:none; color:inherit; }
+  .crow img { width:56px; height:56px; border-radius:12px; background:var(--panel2); }
+  .crow strong { color:var(--gold); }
+  .crow p { margin:4px 0 0; color:var(--muted); font-size:14px; }
+  aside[hidden] { display:none; }
+  aside { width:26rem; background:rgba(22,22,26,.95); border-left:1px solid var(--line); overflow:auto; padding:24px 20px 40px; }
+  h2 { margin:0 0 8px; font-size:18px; }
+  .note { color:var(--muted); font-size:13px; margin:0 0 8px; }
+  .field { margin-top:16px; }
+  .field p { margin:0 0 8px; font-size:14px; }
+  .pills { display:flex; flex-wrap:wrap; gap:8px; }
+  .pills button, .browse { min-height:40px; border:0; border-radius:999px; padding:0 12px; background:var(--panel2); color:var(--cream); }
+  .pills button.on { background:var(--gold); color:var(--ink); font-weight:600; }
+  .path { display:flex; gap:8px; }
+  .path input { flex:1; min-width:0; border:1px solid var(--line); background:var(--panel2); color:var(--cream); border-radius:8px; padding:8px 10px; }
+  .browse { border-radius:8px; border:1px solid var(--line); }
+  footer { display:flex; align-items:center; gap:16px; border-top:1px solid var(--line); padding:12px 24px; }
+  footer span { color:var(--gold); font-size:14px; }
+  .bar { flex:1; height:4px; background:var(--gold); border-radius:999px; }
+  .play { width:48px; height:48px; border:0; border-radius:999px; background:var(--gold); color:var(--ink); font-weight:700; }
+  input[type=range] { width:100%; accent-color:var(--gold); }
+</style>
+</head>
+<body>
+<div class="app">
+  <nav>
+    <button id="nav-settings" type="button" aria-controls="panel" aria-expanded="false">⚙</button>
+    <button id="nav-paths" type="button" aria-controls="panel" aria-expanded="false">📁</button>
+    <button id="lang" class="lang" type="button">EN</button>
+  </nav>
+  <main>
+    <div class="row">
+      <section class="stage">
+        <img class="art" src="/artwork.jpg" alt="">
+        <video src="/artwork.mp4" poster="/artwork.jpg" autoplay muted loop playsinline></video>
+        <div class="shade"></div>
+        <div class="copy">
+          <h1>Sieg Zeon</h1>
+          <p class="hint" id="hint"></p>
+          <a class="crow" href="https://github.com/DiamondDogz/crowbar">
+            <img src="/crowbar.png" alt="">
+            <span><strong id="crow-title"></strong><p id="crow-text"></p></span>
+          </a>
+        </div>
+      </section>
+      <aside id="panel" hidden></aside>
+    </div>
+    <footer>
+      <span id="status">Ready</span>
+      <span class="bar"></span>
+      <button class="play" id="play" type="button">▶</button>
+    </footer>
+  </main>
+</div>
+<script>
+const text = {
+  en: {
+    hint:"The same settings as the in-game menu. Insert, or L2 and R3, opens that menu once the game is running.",
+    settings:"Settings", paths:"Folders",
+    pathsHint:"The game is an extracted folder. The update and the volume keys stay PKG files.",
+    game:"Game folder", gameHint:"The extracted CUSA28763 folder, at version 01.03.",
+    update:"Update (optional)", updateHint:"Your v01.03 update PKG, only if the game folder is still 01.00. It is installed into the game folder.",
+    dlc:"Volume keys (optional)", dlcHint:"One folder with your three volume key PKGs. They unlock the three episodes.",
+    browse:"Browse", clear:"Clear",
+    ready:"Ready", boot:"The game is starting. The log opens separately.",
+    crow:"Crowbar compatible",
+    crowText:"Crowbar is the launcher for PS4RT runtimes. It finds your games, installs the right runtime, updates it, and starts it. Saves, trophies and settings follow every update.",
+    res:"Internal resolution", resNote:"On restart. Ultrawide is experimental.",
+    quality:"Graphics quality", qualityNote:"On restart. Medium and Low lower the sun shadow.",
+    fsrNote:"Applies live. FSR 4 v07 needs a card that supports it.",
+    out:"FSR output", outNote:"No effect while FSR is Off. Native is anti-aliasing, without enlarging.",
+    sharp:"Sharpness", sharpNote:"Applies live. 0% turns it off.",
+    window:"Window", now:"Applies live.",
+    fps:"Frame rate", fpsNote:"Applies live. 60 is the game’s own rate.",
+    counter:"FPS counter", hidden:"Hidden", shown:"Shown",
+    aniso:"Anisotropic filtering", restart:"On restart.",
+    vib:"Vibration", vibNote:"Applies live. 0% turns it off.",
+    labels:{},
+    errors:{
+      noGame:"Choose the game folder first.",
+      noEboot:"That folder has no eboot.bin. Choose the extracted CUSA28763 folder.",
+      pkgGiven:"The game must be the extracted folder, not a PKG.",
+      noUpdate:"The update PKG cannot be found.",
+      noDlc:"The volume key folder cannot be found.",
+      running:"The game is already running.",
+      windowsOnly:"The folder picker only works on Windows.",
+      unknownFolder:"Unknown folder.",
+      generic:"Error"
+    }
+  },
+  fr: {
+    hint:"Les mêmes réglages que le menu en jeu. Insert, ou L2 et R3, ouvre ce menu une fois la partie lancée.",
+    settings:"Réglages", paths:"Dossiers",
+    pathsHint:"Le jeu est un dossier extrait. La mise à jour et les clés de volume restent des fichiers PKG.",
+    game:"Dossier du jeu", gameHint:"Le dossier CUSA28763 extrait, en version 01.03.",
+    update:"Mise à jour (facultatif)", updateHint:"Ton PKG de mise à jour v01.03, seulement si le dossier du jeu est encore en 01.00. Il est installé dans le dossier du jeu.",
+    dlc:"Clés de volume (facultatif)", dlcHint:"Un seul dossier avec tes trois PKG de clés de volume. Ils débloquent les trois épisodes.",
+    browse:"Parcourir", clear:"Effacer",
+    ready:"Prêt", boot:"Le jeu démarre. Le journal s’ouvre à part.",
+    crow:"Compatible Crowbar",
+    crowText:"Crowbar est le lanceur des runtimes PS4RT. Il trouve tes jeux, installe le bon runtime, le met à jour, et le lance. Tes sauvegardes, tes trophées et tes réglages suivent chaque mise à jour.",
+    res:"Résolution interne", resNote:"Au redémarrage. L’ultra-large est expérimental.",
+    quality:"Qualité graphique", qualityNote:"Au redémarrage. Moyenne et Basse baissent l’ombre du soleil.",
+    fsrNote:"Tout de suite. FSR 4 v07 demande une carte qui le supporte.",
+    out:"Sortie FSR", outNote:"Sans effet si FSR est sur Off. Native = anticrénelage, sans agrandir.",
+    sharp:"Netteté", sharpNote:"Tout de suite. 0 % coupe la netteté.",
+    window:"Fenêtre", now:"Tout de suite.",
+    fps:"Images par seconde", fpsNote:"Tout de suite. 60 est le rythme du jeu.",
+    counter:"Compteur d’images", hidden:"Masqué", shown:"Affiché",
+    aniso:"Filtre anisotrope", restart:"Au redémarrage.",
+    vib:"Vibration", vibNote:"Tout de suite. 0 % la coupe.",
+    labels:{
+      "Max (original)":"Max (d’origine)", "Medium":"Moyenne", "Low":"Basse", "Off":"Désactivé",
+      "Native (AA only)":"Native (anticrénelage seul)", "Windowed":"Fenêtré", "Borderless":"Sans bordure",
+      "Fullscreen":"Plein écran", "60 (original)":"60 (d’origine)", "Game default":"Par défaut du jeu"
+    },
+    errors:{
+      noGame:"Choisis d’abord le dossier du jeu.",
+      noEboot:"Ce dossier ne contient pas eboot.bin. Choisis le dossier CUSA28763 extrait.",
+      pkgGiven:"Le jeu doit être le dossier extrait, pas un PKG.",
+      noUpdate:"Le PKG de mise à jour est introuvable.",
+      noDlc:"Le dossier des clés de volume est introuvable.",
+      running:"Le jeu est déjà lancé.",
+      windowsOnly:"Le sélecteur de dossiers ne marche que sous Windows.",
+      unknownFolder:"Dossier inconnu.",
+      generic:"Erreur"
+    }
+  }
+};
+let lang = "en";
+// Both panels start closed; the nav buttons open them, and a second click (or Escape) closes.
+let page = null;
+let state = null;
+
+async function api(path, body) {
+  const response = await fetch(path, body ? { method:"POST", headers:{ "Content-Type":"application/json" }, body:JSON.stringify(body) } : undefined);
+  const data = await response.json();
+  if (!response.ok || data.error) {
+    const errors = text[lang].errors;
+    throw new Error((data.code && errors[data.error]) || data.error || errors.generic);
+  }
+  return data;
+}
+
+function pills(items, current, key) {
+  return `<div class="pills">${items.map(item => `<button type="button" class="${String(item.value)===String(current)?"on":""}" data-key="${key}" data-value="${item.value}">${text[lang].labels[item.label] || item.label}</button>`).join("")}</div>`;
+}
+
+function draw() {
+  const t = text[lang];
+  document.getElementById("hint").textContent = t.hint;
+  document.getElementById("crow-title").textContent = t.crow;
+  document.getElementById("crow-text").textContent = t.crowText;
+  document.getElementById("lang").textContent = lang.toUpperCase();
+  for (const [id, name] of [["nav-settings", "settings"], ["nav-paths", "paths"]]) {
+    const button = document.getElementById(id);
+    button.classList.toggle("on", page === name);
+    button.setAttribute("aria-expanded", String(page === name));
+  }
+  const s = state.settings;
+  const c = state.catalog;
+  const panel = document.getElementById("panel");
+  panel.hidden = !page;
+  if (!page) {
+    panel.innerHTML = "";
+  } else if (page === "paths") {
+    const p = state.paths;
+    panel.innerHTML = `<h2>${t.paths}</h2><p class="note">${t.pathsHint}</p>
+      ${pathRow(t.game, t.gameHint, p.game, "game", false)}
+      ${pathRow(t.update, t.updateHint, p.updatePkg, "update", true)}
+      ${pathRow(t.dlc, t.dlcHint, p.dlcDir, "dlc", true)}`;
+  } else {
+    const groups = {};
+    for (const item of c.resolutions) (groups[item.group] ||= []).push(item);
+    panel.innerHTML = `<h2>${t.settings}</h2>
+      <div class="field"><p>${t.res}</p>${Object.entries(groups).map(([group, items]) => `<p class="note">${group}</p>${pills(items, s.renderResolution, "renderResolution")}`).join("")}<p class="note">${t.resNote}</p></div>
+      <div class="field"><p>${t.quality}</p>${pills(c.qualities, s.graphicsQuality, "graphicsQuality")}<p class="note">${t.qualityNote}</p></div>
+      <div class="field"><p>FSR</p>${pills(c.upscalers, s.upscaler, "upscaler")}<p class="note">${t.fsrNote}</p></div>
+      <div class="field"><p>${t.out}</p>${pills(c.outputs, s.outputRes, "outputRes")}<p class="note">${t.outNote}</p></div>
+      <div class="field"><p>${t.sharp} ${s.sharpness} %</p><input id="sharp" type="range" min="0" max="100" value="${s.sharpness}"><p class="note">${t.sharpNote}</p></div>
+      <div class="field"><p>${t.window}</p>${pills(c.displayModes, s.displayMode, "displayMode")}<p class="note">${t.now}</p></div>
+      <div class="field"><p>${t.fps}</p>${pills(c.fpsLimits, s.fpsLimit, "fpsLimit")}<p class="note">${t.fpsNote}</p></div>
+      <div class="field"><p>${t.counter}</p>${pills([{value:false,label:t.hidden},{value:true,label:t.shown}], s.showFps, "showFps")}<p class="note">${t.now}</p></div>
+      <div class="field"><p>${t.aniso}</p>${pills(c.anisotropies, s.anisotropy, "anisotropy")}<p class="note">${t.restart}</p></div>
+      <div class="field"><p>${t.vib} ${s.vibration ?? 100} %</p><input id="vib" type="range" min="0" max="100" value="${s.vibration ?? 100}"><p class="note">${t.vibNote}</p></div>`;
+  }
+}
+
+const PATH_KEYS = { game:"game", update:"updatePkg", dlc:"dlcDir" };
+function escapeHtml(value) {
+  return String(value).replaceAll("&","&amp;").replaceAll('"',"&quot;").replaceAll("<","&lt;").replaceAll(">","&gt;");
+}
+function pathRow(label, hint, value, kind, optional) {
+  const t = text[lang];
+  const clear = optional && value ? `<button class="browse" type="button" data-clear="${kind}">${t.clear}</button>` : "";
+  return `<div class="field"><p>${label}</p><div class="path"><input readonly value="${escapeHtml(value || "")}"><button class="browse" type="button" data-browse="${kind}">${t.browse}</button>${clear}</div><p class="note">${hint}</p></div>`;
+}
+
+document.getElementById("panel").addEventListener("click", async (event) => {
+  const choice = event.target.closest("[data-key]");
+  const browse = event.target.closest("[data-browse]");
+  const clear = event.target.closest("[data-clear]");
+  try {
+    if (clear) {
+      const catalog = state.catalog;
+      state.paths[PATH_KEYS[clear.dataset.clear]] = "";
+      state = await api("/api/state", state);
+      state.catalog = state.catalog || catalog;
+      draw();
+    }
+    if (choice) {
+      let value = choice.dataset.value;
+      if (value === "true") value = true;
+      else if (value === "false") value = false;
+      else if (choice.dataset.key === "fpsLimit" || choice.dataset.key === "anisotropy") value = Number(value);
+      const catalog = state.catalog;
+      state.settings[choice.dataset.key] = value;
+      state = await api("/api/state", state);
+      state.catalog = state.catalog || catalog;
+      draw();
+    }
+    if (browse) {
+      document.getElementById("status").textContent = text[lang].browse;
+      const paths = await api("/api/browse", { kind: browse.dataset.browse });
+      state.paths = paths;
+      draw();
+      document.getElementById("status").textContent = text[lang].ready;
+    }
+  } catch (error) {
+    document.getElementById("status").textContent = error.message;
+  }
+});
+
+document.getElementById("panel").addEventListener("change", async (event) => {
+  if (event.target.id !== "sharp" && event.target.id !== "vib") return;
+  state.settings[event.target.id === "sharp" ? "sharpness" : "vibration"] = Number(event.target.value);
+  try { const catalog = state.catalog; state = await api("/api/state", state); state.catalog = state.catalog || catalog; draw(); }
+  catch (error) { document.getElementById("status").textContent = error.message; }
+});
+
+document.getElementById("nav-settings").onclick = () => { page = page === "settings" ? null : "settings"; draw(); };
+document.getElementById("nav-paths").onclick = () => { page = page === "paths" ? null : "paths"; draw(); };
+document.addEventListener("keydown", (event) => { if (event.key === "Escape" && page) { page = null; draw(); } });
+document.getElementById("lang").onclick = async () => {
+  lang = lang === "fr" ? "en" : "fr";
+  document.documentElement.lang = lang;
+  document.getElementById("status").textContent = text[lang].ready;
+  draw();
+  try { const catalog = state.catalog; state = await api("/api/state", { ...state, lang }); state.catalog = state.catalog || catalog; }
+  catch (error) { document.getElementById("status").textContent = error.message; }
+};
+document.getElementById("play").onclick = async () => {
+  const status = document.getElementById("status");
+  status.textContent = text[lang].boot;
+  try { await api("/api/play", state); }
+  catch (error) { status.textContent = error.message; }
+};
+
+api("/api/state").then(data => {
+  state = data;
+  if (text[data.lang]) lang = data.lang;
+  document.documentElement.lang = lang;
+  document.getElementById("status").textContent = text[lang].ready;
+  draw();
+}).catch(error => {
+  document.getElementById("status").textContent = error.message;
+});
+</script>
+</body>
+</html>
