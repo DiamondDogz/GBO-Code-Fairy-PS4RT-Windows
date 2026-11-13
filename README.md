@@ -8,7 +8,7 @@ The game is *MOBILE SUIT GUNDAM BATTLE OPERATION Code Fairy*, PlayStation 4, tit
 
 Unofficial. Not affiliated with Bandai Namco, Sunrise or Sony. The game is not included.
 
-**Latest release:** [windows-1.0.1](https://github.com/DiamondDogz/GBO-Code-Fairy-PS4RT-Windows/releases/tag/windows-1.0.1). With [Crowbar](https://github.com/DiamondDogz/crowbar), the Guide button pauses the game. Report what breaks in the [issues](https://github.com/DiamondDogz/GBO-Code-Fairy-PS4RT-Windows/issues).
+**Latest release:** [windows-1.0.2](https://github.com/DiamondDogz/GBO-Code-Fairy-PS4RT-Windows/releases/tag/windows-1.0.2). With [Crowbar](https://github.com/DiamondDogz/crowbar), the Guide button pauses the game, Quit closes it cleanly, and the trophy test profile can unlock a trophy through the runtime. Report what breaks in the [issues](https://github.com/DiamondDogz/GBO-Code-Fairy-PS4RT-Windows/issues).
 
 ![A battle in Chapter 1, with FSR 4 at 60 FPS](docs/images/gameplay.jpg)
 
