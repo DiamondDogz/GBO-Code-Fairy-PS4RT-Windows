@@ -49,6 +49,9 @@ int runtime_pause_gate(void) {
     return waited;
 }
 
+/* The game is paused from Crowbar's Guide (read lock-free by the pad). */
+int runtime_pause_active(void) { return __atomic_load_n(&paused, __ATOMIC_ACQUIRE); }
+
 /* A movie frame was just queued (runtime_movie_order.c): a pause now would cut the movie. */
 void runtime_pause_movie_frame(void) { __atomic_store_n(&last_movie_frame_ns, host_now_ns(), __ATOMIC_RELEASE); }
 
