@@ -1,0 +1,71 @@
+name: Test build
+
+# Compiles bin/ps4rt.exe from this branch with MSYS2 CLANG64 (nothing to build by hand), refreshes
+# the DLLs it needs, and publishes the player archive as a pre-release windows-VERSION: Crowbar
+# offers it like any runtime version (Settings > Runtimes, or the beta channel).
+on:
+  push:
+    branches: ["crowbar-pause"]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version, without the windows- prefix"
+        required: true
+        default: "1.0.1-pause.1"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: test-build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 60
+    env:
+      VERSION: ${{ inputs.version || format('1.0.1-pause.{0}', github.run_number) }}
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: CLANG64
+          update: false
+          install: >-
+            git
+            python
+            mingw-w64-clang-x86_64-clang
+            mingw-w64-clang-x86_64-cmake
+            mingw-w64-clang-x86_64-ninja
+            mingw-w64-clang-x86_64-pkgconf
+            mingw-w64-clang-x86_64-vulkan-devel
+            mingw-w64-clang-x86_64-sdl3
+            mingw-w64-clang-x86_64-ffmpeg
+            mingw-w64-clang-x86_64-crypto++
+            mingw-w64-clang-x86_64-zlib
+      - name: Build ps4rt.exe
+        env:
+          CC: clang
+          CXX: clang++
+          PS4RT_BUILD_JOBS: "4"
+        run: ./build.sh
+      - name: Put it in bin with the DLLs it needs
+        run: |
+          cp -f out/ps4rt.exe bin/ps4rt.exe
+          ldd bin/ps4rt.exe | awk '/clang64/ {print $3}' | sort -u | while read -r dll; do cp -f "$dll" bin/; done
+          git add -f bin
+      - name: Build the archive
+        run: python3 packaging/windows/release_zip.py "$VERSION" dist
+      - name: Publish the pre-release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="windows-$VERSION"
+          sha=$(cut -d' ' -f1 dist/*.sha256)
+          printf 'Test build of branch %s (%s): pause from Crowbar'"'"'s Guide menu.\n\nSHA-256: %s\n' "$GITHUB_REF_NAME" "${GITHUB_SHA:0:7}" "$sha" > notes.md
+          gh release create "$TAG" dist/* --target "$GITHUB_SHA" --prerelease --title "$TAG" --notes-file notes.md
