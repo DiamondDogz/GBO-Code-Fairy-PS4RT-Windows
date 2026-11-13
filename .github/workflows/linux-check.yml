@@ -1,0 +1,28 @@
+name: Linux check
+
+# Builds the Linux runtime of the upstream-PR branch (crowbar-upstream) in Fedora, where SDL3 is
+# packaged, to check the Crowbar changes compile on Linux before they are offered upstream.
+on:
+  push:
+    branches: ["crowbar-upstream-ci"]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    container: fedora:43
+    steps:
+      - name: Dependencies
+        run: |
+          dnf -y install git gcc gcc-c++ cmake ninja-build pkgconf-pkg-config python3 glslang \
+            vulkan-loader-devel vulkan-headers SDL3-devel ffmpeg-free-devel libX11-devel fmt-devel \
+            boost-devel xxhash-devel robin-map-devel zydis-devel cryptopp-devel zlib-devel \
+            vulkan-memory-allocator-devel spirv-headers-devel libdrm-devel
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Build
+        run: |
+          git config --global --add safe.directory "$PWD"
+          PS4RT_LTO=OFF bash build.sh
