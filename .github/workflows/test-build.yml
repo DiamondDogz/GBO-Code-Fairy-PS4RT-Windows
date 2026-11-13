@@ -52,7 +52,11 @@ jobs:
           CC: clang
           CXX: clang++
           PS4RT_BUILD_JOBS: "4"
-        run: ./build.sh
+        run: |
+          # MSYS2's Crypto++ is static now; the PKG extractor's build script bundles a DLL, so it
+          # takes the one already shipped in bin (ps4rt-pkg.exe itself is not changed here).
+          ls /clang64/bin/libcryptopp*.dll >/dev/null 2>&1 || cp -f bin/libcryptopp.dll /clang64/bin/
+          ./build.sh
       - name: Put it in bin with the DLLs it needs
         run: |
           cp -f out/ps4rt.exe bin/ps4rt.exe
