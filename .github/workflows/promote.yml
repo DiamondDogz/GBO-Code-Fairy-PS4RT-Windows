@@ -1,0 +1,33 @@
+name: Promote
+
+# Turns a pre-release into the stable release players get (Crowbar's Stable channel), or back.
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag (e.g. windows-1.0)"
+        required: true
+      stable:
+        description: "Stable (true) or pre-release (false)"
+        required: true
+        default: "true"
+
+permissions:
+  contents: write
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.tag }}
+          STABLE: ${{ inputs.stable }}
+        run: |
+          if [ "$STABLE" = "true" ]; then
+            gh release edit "$TAG" -R "$GITHUB_REPOSITORY" --prerelease=false --latest
+          else
+            gh release edit "$TAG" -R "$GITHUB_REPOSITORY" --prerelease
+          fi
+          gh release view "$TAG" -R "$GITHUB_REPOSITORY" --json tagName,isPrerelease

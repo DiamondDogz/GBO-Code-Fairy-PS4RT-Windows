@@ -1,6 +1,6 @@
 name: Release
 
-# Publishes the player archive as a pre-release tagged windows-VERSION, either from a pushed
+# Publishes the player archive tagged windows-VERSION (stable, or a pre-release when VERSION has a suffix), either from a pushed
 # windows-* tag or by hand (Actions > Release > Run workflow).
 # Runs on a GitHub-hosted runner: the binaries are already in the branch.
 on:
@@ -42,5 +42,7 @@ jobs:
             gh release upload "$TAG" dist/* --clobber
             gh release edit "$TAG" --notes-file notes.md
           else
-            gh release create "$TAG" dist/* --target "$GITHUB_SHA" --prerelease --title "$TAG" --notes-file notes.md
+            # windows-1.1 is a stable release; windows-1.1-beta.1 (a suffix) stays a pre-release.
+            case "${TAG#windows-}" in *-*) kind=--prerelease ;; *) kind=--latest ;; esac
+            gh release create "$TAG" dist/* --target "$GITHUB_SHA" $kind --title "$TAG" --notes-file notes.md
           fi
