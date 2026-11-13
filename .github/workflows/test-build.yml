@@ -47,6 +47,13 @@ jobs:
             mingw-w64-clang-x86_64-ffmpeg
             mingw-w64-clang-x86_64-crypto++
             mingw-w64-clang-x86_64-zlib
+            mingw-w64-clang-x86_64-fmt
+            mingw-w64-clang-x86_64-boost
+            mingw-w64-clang-x86_64-robin-map
+            mingw-w64-clang-x86_64-xxhash
+            mingw-w64-clang-x86_64-zydis
+            mingw-w64-clang-x86_64-vulkan-memory-allocator
+            mingw-w64-clang-x86_64-spirv-headers
       - name: Build ps4rt.exe
         env:
           CC: clang
