@@ -56,6 +56,7 @@ static uint64_t now_ns(void) {
 
 /* The player reported a frame ready and the title queued its upload callback. */
 void runtime_movie_order_queued(const void *movie) {
+    runtime_pause_movie_frame();
     Slot *s = find_slot((uintptr_t)movie, 1);
     if (s) atomic_fetch_add_explicit(&s->pending, 1, memory_order_acq_rel);
 }

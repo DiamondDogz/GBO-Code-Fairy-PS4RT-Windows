@@ -13,7 +13,8 @@
     "dlc": ["--dlc-pkg", "{file}"],
     "updatePkg": ["--update-pkg", "{file}"],
     "updateFolder": ["--update-extracted", "{dir}"],
-    "noDialogs": ["--no-dialogs"]
+    "noDialogs": ["--no-dialogs"],
+    "pause": true
   },
   "options": [
     {
