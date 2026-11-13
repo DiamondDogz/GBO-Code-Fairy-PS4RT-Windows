@@ -79,4 +79,4 @@ jobs:
           TAG="windows-$VERSION"
           sha=$(cut -d' ' -f1 dist/*.sha256)
           printf 'Test build of branch %s (%s): pause from Crowbar'"'"'s Guide menu.\n\nSHA-256: %s\n' "$GITHUB_REF_NAME" "${GITHUB_SHA:0:7}" "$sha" > notes.md
-          gh release create "$TAG" dist/* --target "$GITHUB_SHA" --prerelease --title "$TAG" --notes-file notes.md
+          gh release create "$TAG" dist/* --target "$GITHUB_SHA" --prerelease --title "SiegZeon $TAG" --notes-file notes.md
