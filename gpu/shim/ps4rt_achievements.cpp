@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 #include "ps4rt_achievements.h"
 #include <algorithm>
+#include <atomic>
 #include <array>
 #include <charconv>
 #include <cstdio>
@@ -18,6 +19,9 @@
 #include <fcntl.h>
 #include <sys/file.h>
 #include <unistd.h>
+
+// The context and handle the game registered, for an unlock asked by Crowbar.
+static std::atomic<int32_t> crowbar_context{-1}, crowbar_handle{-1};
 
 namespace Ps4RtAchievements {
 namespace {
@@ -215,6 +219,8 @@ int32_t Service::Register(int32_t context, int32_t handle, uint64_t options) {
     try { (void)ReadState(impl->Path(c.user, impl->sets.at(c.label))); }
     catch (const std::exception&) { return BrokenData; }
     c.registered = true;
+    crowbar_context.store(context);
+    crowbar_handle.store(handle);
     return 0;
 }
 int32_t Service::Unlock(int32_t context, int32_t handle, int32_t id, int32_t* platinum) {
@@ -391,6 +397,16 @@ int32_t ps4rt_trophy_unlock_state(int32_t c, int32_t h, uint32_t* f, uint32_t* n
 int32_t ps4rt_trophy_abort(int32_t h) { TROPHY_CALL(Ps4RtAchievements::Get().Abort(h)); }
 int32_t ps4rt_trophy_destroy_handle(int32_t h) { TROPHY_CALL(Ps4RtAchievements::Get().DestroyHandle(h)); }
 int32_t ps4rt_trophy_destroy_context(int32_t c) { TROPHY_CALL(Ps4RtAchievements::Get().DestroyContext(c)); }
+/* Crowbar's trophy test profile (crowbar-sdk 1.3): unlock through the game's registered context,
+ * by the same path as the game's own call. 0 unlocked (or already), -1 not possible now. */
+int ps4rt_crowbar_unlock(int id) {
+    const int32_t c = crowbar_context.load(), h = crowbar_handle.load();
+    if (c < 0 || h < 0) return -1;
+    int32_t platinum = -1;
+    const int32_t r = ps4rt_trophy_unlock(c, h, id, &platinum);
+    std::printf("Crowbar: trophy %d unlocked on request (0x%x)\n", id, static_cast<unsigned>(r));
+    return (r == 0 || static_cast<uint32_t>(r) == 0x8055160cu) ? 0 : -1;
+}
 }
 static_assert(sizeof(Ps4RtTrophyData) == 24 && sizeof(Ps4RtTrophyDetails) == 1176 &&
               sizeof(Ps4RtTrophyGameDetails) == 1184 && sizeof(Ps4RtTrophyGameData) == 32);
