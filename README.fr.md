@@ -8,7 +8,7 @@ Le jeu est *MOBILE SUIT GUNDAM BATTLE OPERATION Code Fairy*, PlayStation 4, iden
 
 Non officiel. Aucun lien avec Bandai Namco, Sunrise ou Sony. Le jeu n’est pas inclus.
 
-**Préversion.** [windows-1.0](https://github.com/DiamondDogz/GBO-Code-Fairy-PS4RT-Windows/releases/tag/windows-1.0) démarre le jeu et on y joue, mais il faut plus d’essais avant une version stable. Signalez ce qui casse dans les [issues](https://github.com/DiamondDogz/GBO-Code-Fairy-PS4RT-Windows/issues).
+**Dernière version :** [windows-1.0.1](https://github.com/DiamondDogz/GBO-Code-Fairy-PS4RT-Windows/releases/tag/windows-1.0.1). Avec [Crowbar](https://github.com/DiamondDogz/crowbar), le bouton Guide met le jeu en pause. Signalez ce qui casse dans les [issues](https://github.com/DiamondDogz/GBO-Code-Fairy-PS4RT-Windows/issues).
 
 ![Un combat du chapitre 1, avec FSR 4 à 60 images par seconde](docs/images/gameplay.jpg)
 
@@ -26,7 +26,7 @@ English version: [README.md](README.md).
 - `SiegZeon.exe`, `launcher/siegzeon/` et `python/`, le Python embarqué qui fait tourner le lanceur et les scripts de préparation.
 - `bin/ps4rt.exe`, compilé depuis cette branche, et les bibliothèques qu’il importe.
 - `bin/ps4rt-pkg.exe`, l’extracteur utilisé pour la mise à jour et les clés de volume.
-- `crowbar.json` : ce runtime est compatible [Crowbar](https://github.com/DiamondDogz/crowbar). Crowbar peut le lancer et enregistre les trophées que le jeu débloque.
+- `crowbar.json` : ce runtime est compatible [Crowbar](https://github.com/DiamondDogz/crowbar). Crowbar peut le lancer, enregistre les trophées que le jeu débloque, et le met en pause depuis son menu Guide (`src/runtime_crowbar_pause.c`).
 - [INSTALL.md](INSTALL.md), [CREDITS.md](CREDITS.md) et [AI.md](AI.md).
 
 Seul le jeu doit être un dossier extrait. La mise à jour et les trois clés de volume restent des fichiers PKG : le lanceur les installe.
