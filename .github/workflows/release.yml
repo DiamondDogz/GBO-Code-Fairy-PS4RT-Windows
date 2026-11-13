@@ -44,5 +44,5 @@ jobs:
           else
             # windows-1.1 is a stable release; windows-1.1-beta.1 (a suffix) stays a pre-release.
             case "${TAG#windows-}" in *-*) kind=--prerelease ;; *) kind=--latest ;; esac
-            gh release create "$TAG" dist/* --target "$GITHUB_SHA" $kind --title "$TAG" --notes-file notes.md
+            gh release create "$TAG" dist/* --target "$GITHUB_SHA" $kind --title "SiegZeon $TAG" --notes-file notes.md
           fi

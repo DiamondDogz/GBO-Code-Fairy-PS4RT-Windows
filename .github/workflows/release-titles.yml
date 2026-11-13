@@ -1,0 +1,24 @@
+name: Release titles
+
+# Gives every release the title "SiegZeon <tag>", like the first ones (run by hand).
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  titles:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Rename
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          gh release list --limit 100 --json tagName,name --jq '.[] | "\(.tagName)\t\(.name)"' |
+          while IFS=$'\t' read -r tag name; do
+            want="SiegZeon $tag"
+            if [[ $name != "$want" ]]; then gh release edit "$tag" --title "$want"; echo "$tag: $want"; fi
+          done
