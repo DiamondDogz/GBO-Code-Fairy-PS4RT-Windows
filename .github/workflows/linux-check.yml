@@ -18,7 +18,7 @@ jobs:
           dnf -y install --skip-unavailable git gcc gcc-c++ cmake ninja-build pkgconf-pkg-config python3 glslang \
             vulkan-loader-devel vulkan-headers SDL3-devel ffmpeg-free-devel libX11-devel fmt-devel \
             boost-devel xxhash-devel robin-map-devel zydis-devel cryptopp-devel zlib-devel \
-            VulkanMemoryAllocator-devel magic_enum-devel spirv-headers-devel libdrm-devel
+            VulkanMemoryAllocator-devel spirv-headers-devel libdrm-devel
       - uses: actions/checkout@v4
         with:
           submodules: recursive
